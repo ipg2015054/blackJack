@@ -1,76 +1,71 @@
 import java.util.*
 
 class BlackJackGame {
-    var dealer: Dealer
-    var blackJackPlayer: BlackJackPlayer
-    var shoe: Shoe
+    var dealer: Dealer = Dealer()
+    var blackJackPlayer: BlackJackPlayer = BlackJackPlayer()
+    var shoe: Shoe = Shoe()
+    var gameState: GameState = GameStartState()
 
-    init {
+    fun playGame() {
+        while(true) {
+            val reader = Scanner(System.`in`)
+            println("Current state: ${gameState.stateName}")
+            println("Choose an option:")
+            println("1. Continue")
+            println("2. Restart")
+            println("3. Quit")
+
+            when(reader.nextInt()) {
+                1 -> {
+                    try {
+                        gameState.performAction(blackJackPlayer, dealer, shoe, this)
+                        gameState.printGameView(blackJackPlayer, dealer)
+                    } catch (ex: Exception) {
+                        handleTerminalCases()
+                        restartGame()
+                    }
+
+                }
+                2 -> restartGame()
+                3 -> return
+                else -> println("Choose a valid option")
+            }
+        }
+    }
+
+    private fun handleTerminalCases() {
+        val playerScore = blackJackPlayer.getScore()
+
+        if(playerScore > 21) {
+            println("You are busted!!")
+            return
+        }
+
+        if(playerScore == 21) {
+            println("It's a blackJack, You won!!")
+            return
+        }
+
+        val dealerScore = dealer.getScore()
+
+        if(dealerScore > 21) {
+            println("Dealer is busted, You won!!")
+            return
+        }
+
+        if(playerScore > dealerScore) {
+            println("Congrats You have won!!")
+        } else if(dealerScore > playerScore) {
+            println("Dealer has won!!")
+        } else {
+            println("It's a tie")
+        }
+    }
+
+    private fun restartGame() {
         dealer = Dealer()
         blackJackPlayer = BlackJackPlayer()
         shoe = Shoe()
-    }
-
-    fun distributeCards() {
-        var i = 0
-
-        while(i<2) {
-            blackJackPlayer.addCardToHand(shoe.pickRandomCard())
-            dealer.addCardToHand(shoe.pickRandomCard())
-            i++
-        }
-    }
-
-    fun performPlayersTurn() {
-        while (true) {
-            if(isCompletionConditionMet(blackJackPlayer)) return
-
-            val reader = Scanner(System.`in`)
-            println("Choose an option:")
-            println("1. Hit")
-            println("2. Stand")
-
-            val option = reader.nextInt()
-
-            if(option != 1) return
-
-
-            blackJackPlayer.addCardToHand(shoe.pickRandomCard())
-            printGameView()
-        }
-    }
-
-    fun performDealersTurn() {
-        while (true) {
-            if(isCompletionConditionMet(dealer)) return
-
-            dealer.addCardToHand(shoe.pickRandomCard())
-            printGameView()
-        }
-    }
-
-    fun isCompletionConditionMet(player: BlackJackPlayer): Boolean {
-        val currentScore = player.getScore()
-        if(currentScore >= 21) {
-            return true
-        }
-
-        return false
-    }
-
-    fun printGameView() {
-        // 1. Show Player's cards
-        println("Players cards: ")
-        blackJackPlayer.hand.cards.forEach { i ->
-            println("card: ${i.suit} ${i.number}, possible values: ${i.number.getPossibleValues()}")
-        }
-        println("current best score: ${blackJackPlayer.getScore()}\n")
-
-        // 2. Show Dealer's cards
-        println("Dealers cards: ")
-        dealer.hand.cards.forEach { i ->
-            println("card: ${i.suit} ${i.number}, possible values: ${i.number.getPossibleValues()}")
-        }
-        println("current best score: ${dealer.getScore()}\n")
+        gameState = GameStartState()
     }
 }

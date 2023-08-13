@@ -1,12 +1,4 @@
 fun main(args: Array<String>) {
-    println("Hello World!")
-
-    // val cards = mutableListOf(Card(Suit.SPADE, Number.ACE), Card(Suit.SPADE, Number.ACE), Card(Suit.CLUB, Number.FIVE))
-
-    // val hand = Hand(cards)
-
-    // val possibleScores = hand.getAllPossibleScores()
-
 
     // 0. Initialize the game
     println("Initializing the game...\n")
@@ -20,7 +12,7 @@ fun main(args: Array<String>) {
     // 2. Players turn of events
     println("Player's turn")
     blackJackGame.performPlayersTurn()
-    val playerScore = blackJackGame.player.getScore()
+    val playerScore = blackJackGame.blackJackPlayer.getScore()
     // blackJackGame.printGameView()
 
     if(playerScore > 21) {
@@ -43,7 +35,6 @@ fun main(args: Array<String>) {
         println("Dealer is busted, You won!!")
         return
     }
-
 
     // 4. Game summary
     if(playerScore > dealerScore) {

@@ -1,4 +1,4 @@
-class Player {
+open class BlackJackPlayer {
     var hand = Hand(mutableListOf())
 
     fun addCardToHand(card: Card) {

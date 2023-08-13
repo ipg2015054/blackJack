@@ -2,12 +2,12 @@ import java.util.*
 
 class BlackJackGame {
     var dealer: Dealer
-    var player: Player
+    var blackJackPlayer: BlackJackPlayer
     var shoe: Shoe
 
     init {
         dealer = Dealer()
-        player = Player()
+        blackJackPlayer = BlackJackPlayer()
         shoe = Shoe()
     }
 
@@ -15,7 +15,7 @@ class BlackJackGame {
         var i = 0
 
         while(i<2) {
-            player.addCardToHand(shoe.pickRandomCard())
+            blackJackPlayer.addCardToHand(shoe.pickRandomCard())
             dealer.addCardToHand(shoe.pickRandomCard())
             i++
         }
@@ -23,10 +23,7 @@ class BlackJackGame {
 
     fun performPlayersTurn() {
         while (true) {
-            val currentScore = player.getScore()
-            if(currentScore >= 21) {
-                return
-            }
+            if(isCompletionConditionMet(blackJackPlayer)) return
 
             val reader = Scanner(System.`in`)
             println("Choose an option:")
@@ -38,30 +35,36 @@ class BlackJackGame {
             if(option != 1) return
 
 
-            player.addCardToHand(shoe.pickRandomCard())
+            blackJackPlayer.addCardToHand(shoe.pickRandomCard())
             printGameView()
         }
     }
 
     fun performDealersTurn() {
         while (true) {
-            val currentScore = dealer.getScore()
-            if(currentScore >= 17) {
-                return
-            }
+            if(isCompletionConditionMet(dealer)) return
 
             dealer.addCardToHand(shoe.pickRandomCard())
             printGameView()
         }
     }
 
+    fun isCompletionConditionMet(player: BlackJackPlayer): Boolean {
+        val currentScore = player.getScore()
+        if(currentScore >= 21) {
+            return true
+        }
+
+        return false
+    }
+
     fun printGameView() {
         // 1. Show Player's cards
         println("Players cards: ")
-        player.hand.cards.forEach { i ->
+        blackJackPlayer.hand.cards.forEach { i ->
             println("card: ${i.suit} ${i.number}, possible values: ${i.number.getPossibleValues()}")
         }
-        println("current best score: ${player.getScore()}\n")
+        println("current best score: ${blackJackPlayer.getScore()}\n")
 
         // 2. Show Dealer's cards
         println("Dealers cards: ")
